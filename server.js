@@ -1,10 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import fetch from 'node-fetch';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const express = require('express');
+const cors = require('cors');
+const fetch = require('node-fetch');
+require('dotenv').config(); // opcional se usar local
 
 const app = express();
 app.use(cors());
@@ -12,6 +9,12 @@ app.use(express.json());
 
 const AMADEUS_API_KEY = process.env.AMADEUS_API_KEY;
 const AMADEUS_API_SECRET = process.env.AMADEUS_API_SECRET;
+
+// ... resto do código igual ...
+
+
+
+
 
 if (!AMADEUS_API_KEY || !AMADEUS_API_SECRET) {
   console.error('Erro: As variáveis AMADEUS_API_KEY e AMADEUS_API_SECRET não estão definidas.');
