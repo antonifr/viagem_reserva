@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const fetch = require('node-fetch');
-require('dotenv').config(); // opcional se usar local
+const path = require('path');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
@@ -9,12 +9,6 @@ app.use(express.json());
 
 const AMADEUS_API_KEY = process.env.AMADEUS_API_KEY;
 const AMADEUS_API_SECRET = process.env.AMADEUS_API_SECRET;
-
-// ... resto do código igual ...
-
-
-
-
 
 if (!AMADEUS_API_KEY || !AMADEUS_API_SECRET) {
   console.error('Erro: As variáveis AMADEUS_API_KEY e AMADEUS_API_SECRET não estão definidas.');
@@ -59,9 +53,9 @@ app.use(async (req, res, next) => {
 app.get('/api/flights', async (req, res) => {
   try {
     const { origin, destination, departureDate } = req.query;
-    const response = await fetch(\`https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=\${origin}&destinationLocationCode=\${destination}&departureDate=\${departureDate}&adults=1\`, {
+    const response = await fetch(`https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination}&departureDate=${departureDate}&adults=1`, {
       headers: {
-        Authorization: \`Bearer \${accessToken}\`
+        Authorization: `Bearer ${accessToken}`
       }
     });
 
@@ -83,9 +77,9 @@ app.get('/api/hotels', async (req, res) => {
   try {
     const { cityCode, checkInDate, checkOutDate } = req.query;
 
-    const response = await fetch(\`https://test.api.amadeus.com/v2/shopping/hotel-offers?cityCode=\${cityCode}&checkInDate=\${checkInDate}&checkOutDate=\${checkOutDate}&adults=1&roomQuantity=1&paymentPolicy=NONE&bestRateOnly=true\`, {
+    const response = await fetch(`https://test.api.amadeus.com/v2/shopping/hotel-offers?cityCode=${cityCode}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&adults=1&roomQuantity=1&paymentPolicy=NONE&bestRateOnly=true`, {
       headers: {
-        Authorization: \`Bearer \${accessToken}\`
+        Authorization: `Bearer ${accessToken}`
       }
     });
 
@@ -98,16 +92,4 @@ app.get('/api/hotels', async (req, res) => {
     const data = JSON.parse(text);
     res.json(data);
   } catch (err) {
-    console.error('Erro no backend (hotéis):', err);
-    res.status(500).json({ error: 'Erro interno no servidor (hotéis)' });
-  }
-});
-
-// Serve React build
-app.use(express.static(path.join(__dirname, 'client/build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(\`Server rodando na porta \${PORT}\`));
+    console.error('Erro no backen
