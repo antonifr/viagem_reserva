@@ -82,14 +82,15 @@ app.get('/api/hotels', async (req, res) => {
         Authorization: `Bearer ${accessToken}`
       }
     });
+const text = await response.text();
+if (!response.ok) {
+  console.error('Erro na resposta da API de hotéis:', text);
+  return res.status(500).json({ error: 'Erro ao buscar hotéis' });
+}
 
-    const text = await response.text();
-    if (!response.ok) {
-      console.error('Erro na resposta da API de hotéis:', text);
-      return res.status(500).json({ error: 'Erro ao buscar hotéis' });
-    }
-
-    const data = JSON.parse(text);
-    res.json(data);
-  } catch (err) {
-    console.error('Erro no backen
+const data = JSON.parse(text);
+res.json(data);
+} catch (err) {
+  console.error('Erro no backend (hotéis):', err);
+  res.status(500).json({ error: 'Erro interno no servidor (hotéis)' });
+}
