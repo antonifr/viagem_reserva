@@ -82,15 +82,26 @@ app.get('/api/hotels', async (req, res) => {
         Authorization: `Bearer ${accessToken}`
       }
     });
-const text = await response.text();
-if (!response.ok) {
-  console.error('Erro na resposta da API de hotéis:', text);
-  return res.status(500).json({ error: 'Erro ao buscar hotéis' });
-}
 
-const data = JSON.parse(text);
-res.json(data);
-} catch (err) {
-  console.error('Erro no backend (hotéis):', err);
-  res.status(500).json({ error: 'Erro interno no servidor (hotéis)' });
-}
+    const text = await response.text();
+    if (!response.ok) {
+      console.error('Erro na resposta da API de hotéis:', text);
+      return res.status(500).json({ error: 'Erro ao buscar hotéis' });
+    }
+
+    const data = JSON.parse(text);
+    res.json(data);
+  } catch (err) {
+    console.error('Erro no backend (hotéis):', err);
+    res.status(500).json({ error: 'Erro interno no servidor (hotéis)' });
+  }
+});
+
+// Servir o front-end React (se estiver no mesmo projeto)
+app.use(express.static(path.join(__dirname, 'client/build')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server rodando na porta ${PORT}`));
