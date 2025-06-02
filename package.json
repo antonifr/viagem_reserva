@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node server.js",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "postinstall": "cd client && npm install && npm run build"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -12,8 +12,3 @@
     "node-fetch": "^3.3.2"
   }
 }
-"scripts": {
-  "postinstall": "cd client && npm install && npm run build",
-  "start": "node server.js"
-}
-
