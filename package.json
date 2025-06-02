@@ -12,3 +12,8 @@
     "node-fetch": "^3.3.2"
   }
 }
+"scripts": {
+  "postinstall": "cd client && npm install && npm run build",
+  "start": "node server.js"
+}
+
