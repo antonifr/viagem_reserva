@@ -64,13 +64,23 @@ function App() {
       );
       const dados = await response.json();
 
-      const voosFormatados = dados.data.map((item) => ({
-        origem: item.itineraries[0].segments[0].departure.iataCode,
-        destino: item.itineraries[0].segments.slice(-1)[0].arrival.iataCode,
-        companhia: item.validatingAirlineCodes[0],
-        preco: Number(item.price.total),
-        moeda: item.price.currency,
-      }));
+      const voosFormatados = dados.data.map((item) => {
+        const segmentos = item.itineraries[0].segments.map((seg) => ({
+          origem: seg.departure.iataCode,
+          destino: seg.arrival.iataCode,
+          partida: seg.departure.at,
+          chegada: seg.arrival.at,
+          voo: `${seg.carrierCode}${seg.flightNumber}`,
+          duracao: seg.duration,
+        }));
+
+        return {
+          companhia: item.validatingAirlineCodes[0],
+          preco: Number(item.price.total),
+          moeda: item.price.currency,
+          segmentos,
+        };
+      });
 
       setVoos(voosFormatados);
     } catch (error) {
@@ -137,20 +147,33 @@ function App() {
 
       <h2 style={styles.subTitle}>✈️ Resultados:</h2>
       {voos.length === 0 ? (
-        <p style={styles.message}>Preencha os dados acima e clique em "Buscar Voos".</p>
+        <p style={styles.message}>
+          Preencha os dados acima e clique em "Buscar Voos".
+        </p>
       ) : (
         <div style={styles.results}>
           {voos.map((voo, i) => (
             <div key={i} style={styles.card}>
-              <p><strong>{voo.origem} → {voo.destino}</strong></p>
-              <p>Companhia: {voo.companhia}</p>
-              <p>
-                Preço:{' '}
-                {voo.preco.toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })}
-              </p>
+              <p><strong>Companhia:</strong> {voo.companhia}</p>
+              <p><strong>Preço:</strong> {voo.preco.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}</p>
+
+              <hr style={{ margin: '10px 0' }} />
+
+              {voo.segmentos.map((seg, idx) => (
+                <div key={idx} style={{ marginBottom: 10 }}>
+                  <p><strong>{seg.origem} → {seg.destino}</strong></p>
+                  <p>Partida: {new Date(seg.partida).toLocaleString('pt-BR')}</p>
+                  <p>Chegada: {new Date(seg.chegada).toLocaleString('pt-BR')}</p>
+                  <p>Voo: {seg.voo}</p>
+                  <p>Duração: {seg.duracao.replace('PT', '').toLowerCase()}</p>
+                  {idx < voo.segmentos.length - 1 && (
+                    <p style={{ color: 'gray' }}>🔁 Conexão</p>
+                  )}
+                </div>
+              ))}
             </div>
           ))}
         </div>
